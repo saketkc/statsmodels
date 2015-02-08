@@ -61,8 +61,8 @@ class ModelData(object):
                                                   **kwargs)
             self.missing_row_idx = nan_idx
             self.__dict__.update(arrays)  # attach all the data arrays
-            self.orig_endog = self.endog
-            self.orig_exog = self.exog
+            self.orig_endog = endog
+            self.orig_exog = exog
             self.endog, self.exog = self._convert_endog_exog(self.endog,
                                                              self.exog)
         else:
