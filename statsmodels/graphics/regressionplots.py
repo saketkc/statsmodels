@@ -12,6 +12,7 @@ update
 '''
 from statsmodels.compat.python import lrange, string_types, lzip, range
 import numpy as np
+import pandas as pd
 from patsy import dmatrix
 
 from statsmodels.regression.linear_model import OLS, GLS, WLS
@@ -337,8 +338,12 @@ def plot_partregress(endog, exog_i, exog_others, data=None,
     elif isinstance(exog_others, list):
         RHS = "+".join(exog_others)
         RHS = dmatrix(RHS, data)
-    else:
+    elif isinstance(exog_others, np.ndarray) and exog_others.size!=0:
         RHS = exog_others
+    elif isinstance(exog_others, pd.DataFrame) and not exog_others.empty:
+        RHS = exog_others
+    else:
+        RHS = exog_i
 
     if isinstance(exog_i, string_types):
         exog_i = dmatrix(exog_i + "-1", data)
