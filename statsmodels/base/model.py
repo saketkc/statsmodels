@@ -1313,6 +1313,31 @@ class LikelihoodModelResults(Results):
                              invcov=invcov, use_f=True)
         return res
 
+    @staticmethod
+    def _is_lr_test_invalid(model, attribute, expected_value):
+        """
+        Likelihood test is not valid when:
+            1) cov_type of model is set to nonrobust
+            2) .fit(method=REML) in case of MixedLM
+
+        Parameters
+        ----------
+        model: Result instance
+
+        attribute: string
+            Attribute to be looked up in the input model.
+
+        expected_value: string
+            Expected value of the input attribute.
+
+        Returns
+        -------
+        True if the test is invalid
+        """
+        if getattr(model, attribute, expected_value) != expected_value:
+            return True
+        return False
+
     def compare_lr_test(self, restricted, large_sample=False):
         """
         Likelihood ratio test to test whether restricted model is correct
@@ -1378,15 +1403,15 @@ class LikelihoodModelResults(Results):
         if large_sample:
             return self.compare_lm_test(restricted, use_lr=True)
 
-        has_robust1 = (getattr(self, 'cov_type', 'nonrobust') != 'nonrobust')
-        has_robust2 = (getattr(restricted, 'cov_type', 'nonrobust') !=
-                                                                  'nonrobust')
-
-        if has_robust1 or has_robust2:
+        if self._is_lr_test_invalid(self, 'cov_type', 'nonrobust') or self._is_lr_test_invalid(restricted, 'cov_type', 'nonrobust'):
             warnings.warn('Likelihood Ratio test is likely invalid with ' +
                           'robust covariance, proceeding anyway',
                           InvalidTestWarning)
 
+        if self._is_lr_test_invalid(self, 'method', 'ML') or self._is_lr_test_invalid(restricted, 'method', 'ML'):
+            warnings.warn('Likelihood Ratio test is likely invalid with ' +
+                          '.fit(REML=True), proceeding anyway',
+                          InvalidTestWarning)
 
         llf_full = self.llf
         llf_restr = restricted.llf
@@ -1406,6 +1431,7 @@ class LikelihoodModelResults(Results):
         ## Hack for MixedLM
         if hasattr(self, 'k_re'):
             lrdf = -lrdf
+
         lrstat = -2*(llf_restr - llf_full)
         lr_pvalue = stats.chi2.sf(lrstat, lrdf)
         return lrstat, lr_pvalue, lrdf
