@@ -773,7 +773,7 @@ class MixedLM(base.LikelihoodModel):
         group_name = "Group"
         if type(kwargs["groups"]) == str:
             group_name = kwargs["groups"]
-            kwargs["groups"] = np.asarray(group_name)
+            kwargs["groups"] = np.asarray(data[group_name])
 
         if re_formula is not None:
             if re_formula.strip() == "1":
@@ -1854,7 +1854,6 @@ class MixedLM(base.LikelihoodModel):
             hist = []
         else:
             hist = None
-
 
         if start_params is None:
             params = MixedLMParams(self.k_fe, self.k_re, self.k_vc)
