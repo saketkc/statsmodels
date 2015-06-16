@@ -1798,7 +1798,7 @@ class MixedLM(base.LikelihoodModel):
 
     def fit(self, start_params=None, reml=True,
             fe_pen=None, cov_pen=None, free=None,
-            full_output=False, method='nm', **kwargs):
+            full_output=False, method='bfgs', **kwargs):
         """
         Fit a linear mixed model to the data.
 
