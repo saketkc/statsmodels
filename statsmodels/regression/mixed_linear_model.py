@@ -145,7 +145,6 @@ the Newton-Raphson algorihm cannot be used for model fitting.
 
 import numpy as np
 import statsmodels.base.model as base
-from scipy.optimize import fmin_ncg, fmin_cg, fmin_bfgs, fmin
 from statsmodels.tools.decorators import cache_readonly
 from statsmodels.tools import data as data_tools
 from scipy.stats.distributions import norm
@@ -158,7 +157,6 @@ import warnings
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
 from statsmodels.base._penalties import Penalty
 from statsmodels.compat.numpy import np_matrix_rank
-from pandas import DataFrame
 
 
 def _dot(x, y):
@@ -1926,7 +1924,7 @@ class MixedLM(base.LikelihoodModel):
         A MixedLMResults instance.
         """
 
-        _allowed_kwargs = ['gtol', 'maxiter']
+        _allowed_kwargs = ['gtol', 'maxiter','callback']
         for x in kwargs.keys():
             if x not in _allowed_kwargs:
                 raise ValueError("Argument %s not allowed for MixedLM.fit" % x)
