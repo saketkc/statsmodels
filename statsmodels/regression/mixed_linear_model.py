@@ -157,6 +157,7 @@ import warnings
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
 from statsmodels.base._penalties import Penalty
 from statsmodels.compat.numpy import np_matrix_rank
+from __future__ import division
 
 
 def _dot(x, y):
