@@ -157,7 +157,6 @@ import warnings
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
 from statsmodels.base._penalties import Penalty
 from statsmodels.compat.numpy import np_matrix_rank
-from __future__ import division
 
 
 def _dot(x, y):
@@ -954,8 +953,10 @@ class MixedLM(base.LikelihoodModel):
             params = params.fe_params
         else:
             params = params[0:self.k_fe]
+        fit = np.dot(model.exog, result.fe_params)
 
-        return np.dot(exog, params)
+        fit += (model.exog_re * result.random_effects).sum(1)
+        return fit #np.dot(exog, params)
 
 
     def group_list(self, array):
